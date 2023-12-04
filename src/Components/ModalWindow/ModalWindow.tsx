@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import styles from '../../styles.module.css'
 import { IoMdClose } from 'react-icons/io'
+import Chart from 'react-apexcharts'
+import MultiSelect from '../MultiSelect/MultiSelect'
 
 interface ModalWindowProps {
   show: boolean
@@ -13,6 +15,11 @@ interface Cell {
   type: 'string' | 'number'
 }
 
+interface Header {
+  name: string
+  type: 'string' | 'number'
+}
+
 const ModalWindow = (props: ModalWindowProps) => {
   const { show, onClose, file } = props
 
@@ -20,8 +27,11 @@ const ModalWindow = (props: ModalWindowProps) => {
     return null
   }
 
-  const [headers, setHeaders] = useState<string[] | null>(null)
+  const [headers, setHeaders] = useState<Header[] | null>(null)
   const [content, setContent] = useState<Cell[][] | null>(null)
+  const [selectedHeader, setSelectedHeader] = useState<string | null>(null)
+  const [selectedColumns, setSelectedColumns] = useState<string[]>([])
+  const [chartType, setChartType] = useState<'bar' | 'line' | 'area'>('bar')
 
   const getFileHeaders = () => {
     if (file) {
@@ -110,15 +120,70 @@ const ModalWindow = (props: ModalWindowProps) => {
     return cells
   }
 
+  const handleSelectedHeaderChange = (e: any) => {
+    setSelectedHeader(e.target.value)
+  }
+
+  const getChartCategories = () => {
+    if (!selectedHeader) {
+      return []
+    }
+    const headerIndex = headers?.findIndex(
+      (header: any) => header.name === selectedHeader
+    )
+
+    if (headerIndex === undefined) {
+      return []
+    }
+
+    const categories = content?.map((row: any) => row[headerIndex].value)
+
+    return categories
+  }
+
+  const getNumberTypeCols = () => {
+    const numberTypeCols = headers?.filter(
+      (header: any) => header.type === 'number'
+    )
+
+    if (!numberTypeCols) {
+      return []
+    }
+
+    return numberTypeCols
+  }
+
+  const getChartSeries = () => {
+    if (!selectedColumns || !headers || !content) {
+      return []
+    }
+
+    const series = selectedColumns.map((col) => {
+      const colIndex = headers.findIndex((header: any) => header.name === col)
+      return {
+        name: col,
+        data: content?.map((row: any) => row[colIndex].value)
+      }
+    })
+
+    return series
+  }
+
   useEffect(() => {
+    if (headers && content) {
+      return
+    }
+
     getFileContent()
     getFileHeaders()
-  }, [])
+  }, [content, headers])
 
-  console.log(headers, content)
+  useEffect(() => {
+    headers && setSelectedHeader(headers?.[0].name)
+  }, [headers])
 
   return (
-    <div className={styles['pfe-modal-overlay']} onClick={onClose}>
+    <div className={styles['pfe-modal-overlay']}>
       <div className={styles['pfe-modal-content']}>
         <IoMdClose
           size={24}
@@ -149,6 +214,54 @@ const ModalWindow = (props: ModalWindowProps) => {
               ))}
             </tbody>
           </table>
+
+          <select
+            className={styles['pfe-modal-select']}
+            name='select'
+            id='select'
+            onChange={handleSelectedHeaderChange}
+          >
+            {headers?.map((header: Header, index) => (
+              <option
+                key={index}
+                value={header.name}
+                defaultValue={headers[0].name}
+              >
+                {header.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className={styles['pfe-modal-select']}
+            name='select'
+            id='select'
+            onChange={(e) => setChartType(e.target.value as any)}
+          >
+            <option value='bar'>Bar</option>
+            <option value='line'>Line</option>
+            <option value='area'>Area</option>
+          </select>
+
+          {headers && content && (
+            <div>
+              <MultiSelect
+                options={getNumberTypeCols().map((header: any) => header.name)}
+                onChange={setSelectedColumns}
+              />
+              <Chart
+                key={chartType}
+                options={{
+                  xaxis: {
+                    categories: getChartCategories()
+                  }
+                }}
+                series={getChartSeries()}
+                type={chartType}
+                width='500'
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

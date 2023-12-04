@@ -15,6 +15,7 @@ const ImportButton = (props: ImportButtonProps) => {
   const [isDragged, setIsDragged] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [inputValue, setInputValue] = useState('')
 
   const getClassName = () => {
     switch (size) {
@@ -62,7 +63,6 @@ const ImportButton = (props: ImportButtonProps) => {
     e.preventDefault()
     const files = e.dataTransfer.files
     if (files.length) {
-      console.log('Dropped file:', files[0])
       setFile(files[0])
       setIsModalOpen(true)
     }
@@ -85,11 +85,13 @@ const ImportButton = (props: ImportButtonProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false)
     setFile(null)
+    setInputValue('')
   }
 
   return (
     <div>
       <input
+        value={inputValue}
         type='file'
         style={{ display: 'none' }}
         ref={fileInputRef}
