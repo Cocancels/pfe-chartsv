@@ -1,10 +1,9 @@
 import React from 'react'
-
-import { ExampleComponent } from 'pfe-chartsv'
 import 'pfe-chartsv/dist/index.css'
+import { ImportButton } from 'pfe-chartsv'
 
 const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />
+  return <ImportButton size='medium'/>
 }
 
 export default App

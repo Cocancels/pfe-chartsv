@@ -1,9 +1,108 @@
-/* add css module styles here (optional) */
+/* Import button */
+.pfe-import-button-small {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  border: 1px solid black;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: transparent;
+  transition: 0.2s;
+}
 
-.test {
-  margin: 2em;
-  padding: 0.5em;
-  border: 2px solid #000;
-  font-size: 2em;
-  text-align: center;
+.pfe-import-button-medium {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100px;
+  height: 100px;
+  border: 1px dashed black;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: transparent;
+  transition: 0.2s;
+}
+
+.pfe-import-button-large {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 200px;
+  height: 200px;
+  border: 1px solid black;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: transparent;
+  transition: 0.2s;
+}
+
+.pfe-import-button-small:hover,
+.pfe-import-button-medium:hover,
+.pfe-import-button-large:hover
+{
+  transition: 0.2s;
+  cursor: pointer;
+  background-color: #e9e9e9;
+}
+
+.pfe-import-button--dragged {
+  background-color: #e9e9e9;
+}
+
+/* Modal */
+.pfe-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.pfe-modal-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  position: relative;
+  width: 80%;
+  max-width: 1400px;
+  height: 50%;
+  max-height: 1000px;
+  z-index: 1001;
+}
+
+.pfe-modal-close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.pfe-modal-body {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+}
+
+/* Modal table */
+.pfe-modal-table {
+  border-collapse: collapse;
+  overflow: hidden;
 }
