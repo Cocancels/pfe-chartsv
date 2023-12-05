@@ -20,6 +20,21 @@ interface Header {
   type: 'string' | 'number'
 }
 
+interface ChartParams {
+  type: 'bar' | 'line' | 'area' | 'table'
+  stacked: boolean
+  stackType: boolean
+  showLabels: boolean
+}
+
+interface AvailableParams {
+  header: boolean
+  type: boolean
+  stacked: boolean
+  stackType: boolean
+  showLabels: boolean
+}
+
 const ModalWindow = (props: ModalWindowProps) => {
   const { show, onClose, file } = props
 
@@ -31,7 +46,20 @@ const ModalWindow = (props: ModalWindowProps) => {
   const [content, setContent] = useState<Cell[][] | null>(null)
   const [selectedHeader, setSelectedHeader] = useState<string | null>(null)
   const [selectedColumns, setSelectedColumns] = useState<string[]>([])
-  const [chartType, setChartType] = useState<'bar' | 'line' | 'area'>('bar')
+  const [loading, setLoading] = useState<boolean>(false)
+  const [chartParams, setChartParams] = useState<ChartParams>({
+    type: 'bar',
+    stacked: true,
+    stackType: false,
+    showLabels: true
+  })
+  const [availableParams, setAvailableParams] = useState<AvailableParams>({
+    header: true,
+    type: true,
+    stacked: true,
+    stackType: true,
+    showLabels: true
+  })
 
   const getFileHeaders = () => {
     if (file) {
@@ -63,7 +91,9 @@ const ModalWindow = (props: ModalWindowProps) => {
         const content = lines.map((line: string) => {
           return parseCSVLine(line)
         })
-        setContent(content)
+        const filteredContent = content.filter((row: any) => row.length > 0)
+
+        setContent(filteredContent)
       }
       reader.readAsText(file)
     }
@@ -169,8 +199,53 @@ const ModalWindow = (props: ModalWindowProps) => {
     return series
   }
 
+  const handleChartTypeChange = (e: any) => {
+    setChartParams({ ...chartParams, type: e.target.value })
+
+    if (e.target.value === 'bar') {
+      setChartParams({ ...chartParams, type: 'bar' })
+      setAvailableParams({
+        header: true,
+        type: true,
+        stacked: true,
+        stackType: true,
+        showLabels: true
+      })
+    } else if (e.target.value === 'line') {
+      setChartParams({ ...chartParams, type: e.target.value, stacked: false })
+      setAvailableParams({
+        header: true,
+        type: true,
+        stacked: false,
+        stackType: false,
+        showLabels: true
+      })
+    } else if (e.target.value === 'area') {
+      setChartParams({ ...chartParams, type: e.target.value, stacked: false })
+      setAvailableParams({
+        header: true,
+        type: true,
+        stacked: true,
+        stackType: false,
+        showLabels: true
+      })
+    } else if (e.target.value === 'table') {
+      setChartParams({ ...chartParams, type: e.target.value, stacked: false })
+      setAvailableParams({
+        header: false,
+        type: true,
+        stacked: false,
+        stackType: false,
+        showLabels: false
+      })
+    }
+  }
+
   useEffect(() => {
+    setLoading(true)
+
     if (headers && content) {
+      setLoading(false)
       return
     }
 
@@ -185,84 +260,166 @@ const ModalWindow = (props: ModalWindowProps) => {
   return (
     <div className={styles['pfe-modal-overlay']}>
       <div className={styles['pfe-modal-content']}>
-        <IoMdClose
-          size={24}
-          className={styles['pfe-modal-close-button']}
-          onClick={onClose}
-        />
+        {loading ? (
+          <div className={styles['pfe-loader']}>Loading ...</div>
+        ) : (
+          <div>
+            <IoMdClose
+              size={24}
+              className={styles['pfe-modal-close-button']}
+              onClick={onClose}
+            />
 
-        <div className={styles['pfe-modal-header']}>
-          <h2 className={styles['pfe-modal-title']}>Import {file?.name}</h2>
-        </div>
-
-        <div className={styles['pfe-modal-body']}>
-          <table className={styles['pfe-modal-table']}>
-            <thead>
-              <tr>
-                {headers?.map((header: any, index) => (
-                  <th key={index}>{header.name}</th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {content?.map((row, index) => (
-                <tr key={index}>
-                  {row.map((item: Cell, index) => (
-                    <td key={index}>{item.value}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <select
-            className={styles['pfe-modal-select']}
-            name='select'
-            id='select'
-            onChange={handleSelectedHeaderChange}
-          >
-            {headers?.map((header: Header, index) => (
-              <option
-                key={index}
-                value={header.name}
-                defaultValue={headers[0].name}
-              >
-                {header.name}
-              </option>
-            ))}
-          </select>
-
-          <select
-            className={styles['pfe-modal-select']}
-            name='select'
-            id='select'
-            onChange={(e) => setChartType(e.target.value as any)}
-          >
-            <option value='bar'>Bar</option>
-            <option value='line'>Line</option>
-            <option value='area'>Area</option>
-          </select>
-
-          {headers && content && (
-            <div>
-              <MultiSelect
-                options={getNumberTypeCols().map((header: any) => header.name)}
-                onChange={setSelectedColumns}
-              />
-              <Chart
-                key={chartType}
-                options={{
-                  xaxis: {
-                    categories: getChartCategories()
-                  }
-                }}
-                series={getChartSeries()}
-                type={chartType}
-                width='500'
-              />
+            <div className={styles['pfe-modal-header']}>
+              <h2 className={styles['pfe-modal-title']}>Import {file?.name}</h2>
             </div>
-          )}
-        </div>
+
+            <div className={styles['pfe-modal-body']}>
+              <div className={styles['pfe-modal-body-params']}>
+                {availableParams.header && (
+                  <div className={styles['pfe-modal-body-params-header']}>
+                    <label htmlFor='select'>Select header</label>
+                    <select
+                      className={styles['pfe-modal-select']}
+                      name='select'
+                      id='select'
+                      onChange={handleSelectedHeaderChange}
+                    >
+                      {headers?.map((header: Header, index) => (
+                        <option
+                          key={index}
+                          value={header.name}
+                          defaultValue={headers[0].name}
+                        >
+                          {header.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {availableParams.type && (
+                  <select
+                    className={styles['pfe-modal-select']}
+                    name='select'
+                    id='select'
+                    onChange={handleChartTypeChange}
+                  >
+                    <option value='bar'>Bar</option>
+                    <option value='line'>Line</option>
+                    <option value='area'>Area</option>
+                  </select>
+                )}
+
+                {availableParams.stacked && (
+                  <div>
+                    <label htmlFor='stacked'>Stacked</label>
+                    <input
+                      type='checkbox'
+                      name='stacked'
+                      id='stacked'
+                      checked={chartParams.stacked}
+                      onChange={(e) =>
+                        setChartParams({
+                          ...chartParams,
+                          stacked: e.target.checked
+                        })
+                      }
+                    />
+                  </div>
+                )}
+
+                {availableParams.stackType && (
+                  <div>
+                    <label htmlFor='stackType'>Stack Type</label>
+                    <input
+                      type='checkbox'
+                      name='stackType'
+                      id='stackType'
+                      checked={chartParams.stackType}
+                      onChange={(e) =>
+                        setChartParams({
+                          ...chartParams,
+                          stackType: e.target.checked
+                        })
+                      }
+                    />
+                  </div>
+                )}
+
+                {availableParams.showLabels && (
+                  <div>
+                    <label htmlFor='showLabels'>Show Labels</label>
+                    <input
+                      type='checkbox'
+                      name='showLabels'
+                      id='showLabels'
+                      checked={chartParams.showLabels}
+                      onChange={(e) =>
+                        setChartParams({
+                          ...chartParams,
+                          showLabels: e.target.checked
+                        })
+                      }
+                    />
+                  </div>
+                )}
+
+                {chartParams.type === 'table' ? (
+                  <table className={styles['pfe-modal-table']}>
+                    <thead>
+                      <tr>
+                        {headers?.map((header: any, index) => (
+                          <th key={index}>{header.name}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {content?.map((row, index) => (
+                        <tr key={index}>
+                          {row.map((item: Cell, index) => (
+                            <td key={index}>{item.value}</td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div>
+                    <MultiSelect
+                      options={getNumberTypeCols().map(
+                        (header: any) => header.name
+                      )}
+                      onChange={setSelectedColumns}
+                    />
+                    <Chart
+                      key={chartParams.type}
+                      options={{
+                        xaxis: {
+                          categories: getChartCategories(),
+                          labels: {
+                            rotate: -90
+                          }
+                        },
+                        chart: {
+                          stacked: chartParams.stacked,
+                          stackType: chartParams.stackType ? '100%' : undefined,
+                          width: '100%'
+                        },
+                        dataLabels: {
+                          enabled: chartParams.showLabels
+                        }
+                      }}
+                      series={getChartSeries()}
+                      type={chartParams.type}
+                      width='500'
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
