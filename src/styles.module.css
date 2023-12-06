@@ -94,14 +94,119 @@
 .pfe-modal-body {
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: auto;
 }
 
 /* Modal table */
 .pfe-modal-table {
   border-collapse: collapse;
   overflow: hidden;
+}
+
+.pfe-modal-full-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.pfe-modal-body-params {
+  width: 100%;
+  height: 100%;
+}
+
+.pfe-modal-body-params > div {
+  margin: 20px 0;
+  display: flex;
+  align-items: left;
+  flex-direction: column;
+}
+
+.pfe-modal-container {
+  width: 75%;
+  height: 100%;
+  overflow: auto;
+}
+
+.pfe-modal-sidebar {
+  width: 25%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto;
+  border-right: solid 1px #ccc;
+  padding-right: 20px;
+}
+
+/* Checkbox */
+.pfe-custom-checkbox {
+  display: inline-block;
+  position: relative;
+  padding-left: 35px;
+  cursor: pointer;
+  user-select: none;
+  font-size: 16px;
+}
+
+.pfe-custom-checkbox input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.pfe-custom-checkbox-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 22px;
+  width: 22px;
+  background-color: #eee;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+.pfe-custom-checkbox:hover input ~ .pfe-custom-checkbox-checkmark {
+  background-color: #ccc;
+}
+
+.pfe-custom-checkbox input:checked ~ .pfe-custom-checkbox-checkmark {
+  background-color: #2196f3;
+}
+
+.pfe-custom-checkbox-checkmark:after {
+  content: '';
+  position: absolute;
+  display: none;
+}
+
+.pfe-custom-checkbox input:checked ~ .pfe-custom-checkbox-checkmark:after {
+  display: block;
+}
+
+.pfe-custom-checkbox .pfe-custom-checkbox-checkmark:after {
+  left: 7px;
+  top: 4px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+
+.pfe-modal-select {
+  width: 100%;
+  padding: 10px 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: white;
+  font-size: 16px;
+  color: #5f6368;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%235f6368" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Icône de flèche vers le bas */
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  cursor: pointer;
 }
