@@ -299,16 +299,20 @@ const ModalWindow = (props: ModalWindowProps) => {
                 )}
 
                 {availableParams.type && (
-                  <select
-                    className={styles['pfe-modal-select']}
-                    name='select'
-                    id='select'
-                    onChange={handleChartTypeChange}
-                  >
-                    <option value='bar'>Bar</option>
-                    <option value='line'>Line</option>
-                    <option value='area'>Area</option>
-                  </select>
+                  <div>
+                    <label htmlFor='selectType'>Select chart type</label>
+                    <select
+                      className={styles['pfe-modal-select']}
+                      name='selectType'
+                      id='select'
+                      onChange={handleChartTypeChange}
+                    >
+                      <option value='bar'>Bar</option>
+                      <option value='line'>Line</option>
+                      <option value='area'>Area</option>
+                      <option value='table'>Table</option>
+                    </select>
+                  </div>
                 )}
 
                 {availableParams.stacked && (
