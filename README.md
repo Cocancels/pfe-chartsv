@@ -4,6 +4,19 @@
 
 [![NPM](https://img.shields.io/npm/v/pfe-chartsv.svg)](https://www.npmjs.com/package/pfe-chartsv) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
+## WARNING
+
+If you get an error when executing npm start on /example folder, you have 2 solutions:
+
+<ol>
+  <li>
+    <p>Upgrade your Node version to latest (actually v20)</p>
+  </li>
+  <li>
+    <p>Remove the <strong>--openssl-legacy-provider</strong> in package.json (line 7-8)</p>
+  </li>
+</ol>
+
 ## Install
 
 ```bash
