@@ -62,6 +62,8 @@
     "dist"
   ],
   "dependencies": {
+    "multiselect-react-dropdown": "^2.0.25",
+    "react-apexcharts": "^1.4.1",
     "react-icons": "^4.12.0"
   }
 }
