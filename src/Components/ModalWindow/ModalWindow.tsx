@@ -207,8 +207,6 @@ const ModalWindow = (props: ModalWindowProps) => {
       }
     })
 
-    console.log(columns)
-
     setColumns(columns)
 
     if (columns.length > 0) {
