@@ -21,7 +21,7 @@ export interface Header {
 }
 
 export interface ChartParams {
-  type: 'bar' | 'line' | 'area' | 'table'
+  type: 'bar' | 'line' | 'area' | 'table' | 'pie'
   stacked: boolean
   stackType: boolean
   showLabels: boolean
@@ -229,6 +229,14 @@ const ModalWindow = (props: ModalWindowProps) => {
       }
     })
 
+    if (chartParams.type === 'pie') {
+      if (series.length > 0 && series[0].data) {
+        return series[0].data
+      } else {
+        return []
+      }
+    }
+
     return series
   }
 
@@ -320,16 +328,22 @@ const ModalWindow = (props: ModalWindowProps) => {
                       },
                       chart: {
                         stacked: chartParams.stacked,
-                        stackType: chartParams.stackType ? '100%' : undefined
+                        stackType: chartParams.stackType ? '100%' : undefined,
+                        type: chartParams.type
                       },
                       dataLabels: {
                         enabled: chartParams.showLabels,
                         formatter: function (val: any) {
-                          return chartParams.stackType
-                            ? val.toFixed(2) + '%'
-                            : val
+                          if (
+                            chartParams.type === 'pie' ||
+                            chartParams.stackType
+                          ) {
+                            return val.toFixed(2) + '%'
+                          }
+                          return val
                         }
-                      }
+                      },
+                      labels: getChartCategories()
                     }}
                     series={getChartSeries()}
                     type={chartParams.type}
