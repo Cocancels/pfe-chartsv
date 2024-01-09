@@ -4,7 +4,7 @@ import {
   ChartParams,
   Header,
   NumberTypeCol
-} from '../ModalWindow/ModalWindow'
+} from '../ChartCreator/ChartCreator'
 import styles from '../../styles.module.css'
 import Multiselect from 'multiselect-react-dropdown'
 import Checkbox from '../Checkbox/Checkbox'
