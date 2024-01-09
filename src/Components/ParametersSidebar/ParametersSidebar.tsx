@@ -4,7 +4,7 @@ import {
   ChartParams,
   Header,
   NumberTypeCol
-} from '../ModalWindow/ModalWindow'
+} from '../ChartCreator/ChartCreator'
 import styles from '../../styles.module.css'
 import Multiselect from 'multiselect-react-dropdown'
 import Checkbox from '../Checkbox/Checkbox'
@@ -83,6 +83,21 @@ const ParametersSidebar = (props: ParametersSidebarProps) => {
         columns: true,
         showLabels: true
       })
+    } else if (e.target.value === 'pie') {
+      onChartParamChange({
+        ...chartParams,
+        type: e.target.value,
+        stacked: false,
+        stackType: false
+      })
+      onAvailableParamChange({
+        header: true,
+        type: true,
+        stacked: false,
+        stackType: false,
+        columns: false,
+        showLabels: true
+      })
     } else if (e.target.value === 'table') {
       onChartParamChange({
         ...chartParams,
@@ -107,18 +122,45 @@ const ParametersSidebar = (props: ParametersSidebarProps) => {
 
   return (
     <div className={styles['pfe-modal-body-params']}>
-      <Multiselect
-        options={columns}
-        selectedValues={selectedColumns}
-        onSelect={(selectedList) => {
-          onSelectedColumnsChange(selectedList)
-        }}
-        onRemove={(selectedList) => {
-          onSelectedColumnsChange(selectedList)
-        }}
-        displayValue='name'
-        hidePlaceholder
-      />
+      {chartParams.type !== 'table' && <p>Column(s)</p>}
+
+      {availableParams.columns ? (
+        <Multiselect
+          options={columns}
+          selectedValues={selectedColumns}
+          onSelect={(selectedList) => {
+            onSelectedColumnsChange(selectedList)
+          }}
+          onRemove={(selectedList) => {
+            onSelectedColumnsChange(selectedList)
+          }}
+          displayValue='name'
+          hidePlaceholder
+        />
+      ) : (
+        chartParams.type !== 'table' && (
+          <select
+            className={styles['pfe-modal-select']}
+            name='select'
+            id='select'
+            onChange={(e) =>
+              onSelectedColumnsChange(
+                columns.filter((col) => col.name === e.target.value)
+              )
+            }
+          >
+            {columns?.map((column: NumberTypeCol, index) => (
+              <option
+                key={index}
+                value={column.name}
+                defaultValue={column.name}
+              >
+                {column.name}
+              </option>
+            ))}
+          </select>
+        )
+      )}
       {availableParams.header && (
         <div className={styles['pfe-modal-body-params-header']}>
           <select
@@ -154,6 +196,7 @@ const ParametersSidebar = (props: ParametersSidebarProps) => {
             <option value='bar'>Bar</option>
             <option value='line'>Line</option>
             <option value='area'>Area</option>
+            <option value='pie'>Pie</option>
             <option value='table'>Table</option>
           </select>
         </div>

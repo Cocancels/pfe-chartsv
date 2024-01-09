@@ -90,8 +90,49 @@
 
 /* Modal table */
 .pfe-modal-table {
-  border-collapse: collapse;
-  overflow: hidden; }
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  height: 80%;
+  margin: auto; }
+
+.pfe-modal-table-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border: solid 1px #131313;
+  padding: 0px 10px; }
+
+.pfe-modal-table-header > p {
+  text-align: center;
+  font-weight: bold;
+  flex: 1 1 0;
+  width: 0; }
+
+.pfe-modal-table-content {
+  display: flex;
+  flex-direction: column; }
+
+.pfe-modal-table-content-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  border: solid 1px #131313;
+  border-top: none;
+  padding: 0px 10px; }
+
+.pfe-modal-table-content-row:nth-child(even) {
+  background-color: #f5f5f5; }
+
+.pfe-modal-table-content-row:nth-child(odd) {
+  background-color: #e4e4e4; }
+
+.pfe-modal-table-content-row > p {
+  text-align: left;
+  flex: 1 1 0;
+  width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis; }
 
 .pfe-modal-full-container {
   width: 100%;

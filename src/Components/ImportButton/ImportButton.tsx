@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react'
 import { CiImport } from 'react-icons/ci'
 import styles from '../../styles.module.css'
 import ModalWindow from '../ModalWindow/ModalWindow'
+import { ChartCreator } from '../ChartCreator/ChartCreator'
 
 interface ImportButtonProps {
   size: 'small' | 'medium' | 'large'
@@ -111,7 +112,9 @@ const ImportButton = (props: ImportButtonProps) => {
         {file ? <p>{file.name}</p> : <p>Drop a file here</p>}
       </button>
 
-      <ModalWindow show={isModalOpen} onClose={handleCloseModal} file={file} />
+      <ModalWindow show={isModalOpen} onClose={handleCloseModal}>
+        <ChartCreator file={file} />
+      </ModalWindow>
     </div>
   )
 }
