@@ -7,7 +7,7 @@ interface ChartCreatorProps {
   file: File | null
 }
 
-interface Cell {
+export interface Cell {
   value: string | number
   type: 'string' | 'number'
 }
