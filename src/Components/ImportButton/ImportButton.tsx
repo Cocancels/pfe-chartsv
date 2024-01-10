@@ -6,10 +6,11 @@ import { ChartCreator } from '../ChartCreator/ChartCreator'
 
 interface ImportButtonProps {
   size: 'small' | 'medium' | 'large'
+  color?: 'white' | 'black'
 }
 
 const ImportButton = (props: ImportButtonProps) => {
-  const { size } = props
+  const { size, color } = props
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -23,22 +24,34 @@ const ImportButton = (props: ImportButtonProps) => {
       case 'small':
         return (
           styles['pfe-import-button-small'] +
-          (isDragged ? ' ' + styles['pfe-import-button--dragged'] : '')
+          (isDragged ? ' ' + styles['pfe-import-button--dragged'] : '') +
+          (color
+            ? ' ' + styles['pfe-import-button--' + color]
+            : ' ' + styles['pfe-import-button--white'])
         )
       case 'medium':
         return (
           styles['pfe-import-button-medium'] +
-          (isDragged ? ' ' + styles['pfe-import-button--dragged'] : '')
+          (isDragged ? ' ' + styles['pfe-import-button--dragged'] : '') +
+          (color
+            ? ' ' + styles['pfe-import-button--' + color]
+            : ' ' + styles['pfe-import-button--white'])
         )
       case 'large':
         return (
           styles['pfe-import-button-large'] +
-          (isDragged ? ' ' + styles['pfe-import-button--dragged'] : '')
+          (isDragged ? ' ' + styles['pfe-import-button--dragged'] : '') +
+          (color
+            ? ' ' + styles['pfe-import-button--' + color]
+            : ' ' + styles['pfe-import-button--white'])
         )
       default:
         return (
           styles['pfe-import-button-medium'] +
-          (isDragged ? ' ' + styles['pfe-import-button--dragged'] : '')
+          (isDragged ? ' ' + styles['pfe-import-button--dragged'] : '') +
+          (color
+            ? ' ' + styles['pfe-import-button--' + color]
+            : ' ' + styles['pfe-import-button--white'])
         )
     }
   }
