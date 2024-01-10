@@ -4,8 +4,6 @@ import Chart from 'react-apexcharts'
 
 interface CustomChartProps {
   link: string
-  title: string
-  description: string
   chartParams?: CustomChartParams
   cols: string[]
 }
@@ -21,10 +19,12 @@ interface CustomChartParams {
   width?: number | string
   colors?: string[]
   backgroundColor?: string
+  textColor?: string
+  toolbar?: boolean
 }
 
 export const CustomChart = (props: CustomChartProps) => {
-  const { link, title, description, chartParams, cols } = props
+  const { link, chartParams, cols } = props
 
   const [headers, setHeaders] = useState<Header[] | null>(null)
   const [content, setContent] = useState<Cell[][] | null>(null)
@@ -199,10 +199,7 @@ export const CustomChart = (props: CustomChartProps) => {
   }, [headers])
 
   return (
-    <div>
-      <h1>{title}</h1>
-      <p>{description}</p>
-
+    <div style={{ width: '100%' }}>
       {headers && content && (
         <Chart
           options={{
@@ -210,12 +207,24 @@ export const CustomChart = (props: CustomChartProps) => {
             xaxis: {
               categories: getChartCategories(),
               labels: {
-                rotate: -90
+                rotate: -90,
+                style: {
+                  colors: chartParams?.textColor
+                    ? chartParams.textColor
+                    : '#000'
+                }
               }
             },
             yaxis: {
               max: chartParams?.yAxisMax ? chartParams.yAxisMax : undefined,
-              min: chartParams?.yAxisMin ? chartParams.yAxisMin : undefined
+              min: chartParams?.yAxisMin ? chartParams.yAxisMin : undefined,
+              labels: {
+                style: {
+                  colors: chartParams?.textColor
+                    ? chartParams.textColor
+                    : '#000'
+                }
+              }
             },
             chart: {
               background: chartParams?.backgroundColor
@@ -226,7 +235,15 @@ export const CustomChart = (props: CustomChartProps) => {
               type:
                 chartParams?.type === 'table' || chartParams?.type === undefined
                   ? 'bar'
-                  : chartParams?.type
+                  : chartParams?.type,
+              toolbar: {
+                show: chartParams?.toolbar
+              }
+            },
+            legend: {
+              labels: {
+                colors: chartParams?.textColor ? chartParams.textColor : '#000'
+              }
             },
             dataLabels: {
               enabled: chartParams?.showLabels,
@@ -235,6 +252,11 @@ export const CustomChart = (props: CustomChartProps) => {
                   return val.toFixed(2) + '%'
                 }
                 return val
+              },
+              style: {
+                colors: chartParams?.textColor
+                  ? [chartParams.textColor]
+                  : ['#fff']
               }
             },
             labels: getChartCategories()

@@ -8,8 +8,6 @@ const App = () => {
       <ImportButton size='medium' />
       <CustomChart
         link='./test.csv'
-        title='Custom Chart'
-        description='This is a custom chart'
         chartParams={{
           stacked: true,
           showLabels: true,
@@ -17,7 +15,8 @@ const App = () => {
           yAxisMin: 0,
           height: '500px',
           width: '100%',
-          colors: ['#FF0000', '#00FF00']
+          colors: ['#FF0000', '#00FF00'],
+          textColor: 'red'
         }}
         cols={['age', 'monnaie']}
       />

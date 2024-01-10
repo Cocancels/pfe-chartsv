@@ -39,6 +39,34 @@
   transition: 0.2s;
 }
 
+.pfe-import-button--white {
+  border: 1px solid rgb(32, 32, 32) !important;
+  background-color: white !important;
+  color: rgb(32, 32, 32) !important;
+  transition: 0.2s;
+}
+
+.pfe-import-button--white:hover {
+  background-color: rgb(32, 32, 32) !important;
+  border: 1px solid white !important;
+  color: white !important;
+  transition: 0.2s;
+}
+
+.pfe-import-button--black {
+  border: 1px solid white !important;
+  background-color: rgb(32, 32, 32) !important;
+  color: white !important;
+  transition: 0.2s;
+}
+
+.pfe-import-button--black:hover {
+  background-color: white !important;
+  border: 1px solid rgb(32, 32, 32) !important;
+  color: rgb(32, 32, 32) !important;
+  transition: 0.2s;
+}
+
 .pfe-import-button-small:hover,
 .pfe-import-button-medium:hover,
 .pfe-import-button-large:hover {
