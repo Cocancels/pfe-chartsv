@@ -76,42 +76,49 @@ export const ChartCreator = (props: ChartCreatorProps) => {
   })
   const [columns, setColumns] = useState<NumberTypeCol[]>([])
   const [selectedColumns, setSelectedColumns] = useState<NumberTypeCol[]>([])
-  const getFileHeaders = () => {
+  const [text, setText] = useState<string>('')
+
+  const getFileText = () => {
     if (file) {
       const reader = new FileReader()
       reader.onload = (e: any) => {
         const text = e.target.result
-        const headers = text.split('\n')[0].split(',')
-
-        const newHeaders = headers.map((header: string, index: number) => {
-          const type = content?.[0]?.[index].type
-          return {
-            name: header,
-            type: type
-          }
-        })
-
-        setHeaders(newHeaders)
+        setText(text)
       }
       reader.readAsText(file)
     }
   }
 
-  const getFileContent = () => {
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = (e: any) => {
-        const text = e.target.result
-        const lines = text.split('\n').slice(1)
-        const content = lines.map((line: string) => {
-          return parseCSVLine(line)
-        })
-        const filteredContent = content.filter((row: any) => row.length > 0)
+  const getFileHeaders = async () => {
+    const headers: any = text.split('\n')[0].split(',')
 
-        setContent(filteredContent)
-      }
-      reader.readAsText(file)
+    if (headers[headers.length - 1].includes('\r')) {
+      headers[headers.length - 1] = headers[headers.length - 1].slice(0, -1)
     }
+
+    const thisContent = await getFileContent()
+
+    const newHeaders = headers.map((header: string, index: number) => {
+      const type = thisContent?.[0]?.[index].type
+      return {
+        name: header,
+        type: type
+      }
+    })
+
+    setHeaders(newHeaders)
+  }
+
+  const getFileContent = async () => {
+    const lines: any = text.split('\n').slice(1)
+    const content = lines.map((line: string) => {
+      return parseCSVLine(line)
+    })
+    const filteredContent = content.filter((row: any) => row.length > 0)
+
+    setContent(filteredContent)
+
+    return filteredContent
   }
 
   const parseCSVLine = (line: any) => {
@@ -237,9 +244,15 @@ export const ChartCreator = (props: ChartCreatorProps) => {
       return
     }
 
-    getFileContent()
-    getFileHeaders()
-  }, [content, headers])
+    if (text) {
+      getFileContent()
+      getFileHeaders()
+    }
+  }, [content, headers, text])
+
+  useEffect(() => {
+    getFileText()
+  }, [])
 
   useEffect(() => {
     headers && setSelectedHeader(headers?.[0].name)
@@ -274,8 +287,11 @@ export const ChartCreator = (props: ChartCreatorProps) => {
                 ))}
               </div>
               <div className={styles['pfe-modal-table-content']}>
-                {content?.map((row) => (
-                  <div className={styles['pfe-modal-table-content-row']}>
+                {content?.map((row, index) => (
+                  <div
+                    key={index}
+                    className={styles['pfe-modal-table-content-row']}
+                  >
                     {row.map((item: Cell, index) => (
                       <p key={index}>{item.value}</p>
                     ))}
