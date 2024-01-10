@@ -20,27 +20,28 @@ interface CustomChartParams {
   height?: number | string
   width?: number | string
   colors?: string[]
+  backgroundColor?: string
 }
 
 export const CustomChart = (props: CustomChartProps) => {
   const { link, title, description, chartParams, cols } = props
-
-  console.log(cols)
 
   const [headers, setHeaders] = useState<Header[] | null>(null)
   const [content, setContent] = useState<Cell[][] | null>(null)
   const [selectedHeader, setSelectedHeader] = useState<string | null>(null)
   const [selectedColumns, setSelectedColumns] = useState<NumberTypeCol[]>([])
 
-  const getFileHeaders = (text: string) => {
+  const getFileHeaders = async (text: string) => {
     const headers: any = text.split('\n')[0].split(',')
 
     if (headers[headers.length - 1].includes('\r')) {
       headers[headers.length - 1] = headers[headers.length - 1].slice(0, -1)
     }
 
+    const thisContent = await getFileContent(text)
+
     const newHeaders = headers.map((header: string, index: number) => {
-      const type = content?.[0]?.[index].type
+      const type = thisContent?.[0]?.[index].type
       return {
         name: header,
         type: type
@@ -50,7 +51,7 @@ export const CustomChart = (props: CustomChartProps) => {
     setHeaders(newHeaders)
   }
 
-  const getFileContent = (text: string) => {
+  const getFileContent = async (text: string) => {
     const lines: any = text.split('\n').slice(1)
     const content = lines.map((line: string) => {
       return parseCSVLine(line)
@@ -58,6 +59,8 @@ export const CustomChart = (props: CustomChartProps) => {
     const filteredContent = content.filter((row: any) => row.length > 0)
 
     setContent(filteredContent)
+
+    return filteredContent
   }
 
   const parseCSVLine = (line: any) => {
@@ -159,8 +162,6 @@ export const CustomChart = (props: CustomChartProps) => {
       (header: any) => header.type === 'number'
     )
 
-    console.log(numberTypeCols)
-
     if (!numberTypeCols) {
       return
     }
@@ -186,16 +187,12 @@ export const CustomChart = (props: CustomChartProps) => {
     }
     fetch(link)
       .then((response) => response.text())
-      .then((text) => {
-        getFileContent(text)
-        getFileHeaders(text)
+      .then(async (text) => {
+        await getFileContent(text)
+        await getFileHeaders(text)
       })
       .catch((error) => console.log(error))
   }, [content, headers])
-
-  //   useEffect(() => {
-  //     console.log(headers, content)
-  //   }, [headers, content])
 
   useEffect(() => {
     headers && setSelectedHeader(headers?.[0].name)
@@ -206,47 +203,52 @@ export const CustomChart = (props: CustomChartProps) => {
       <h1>{title}</h1>
       <p>{description}</p>
 
-      <Chart
-        options={{
-          colors: chartParams?.colors ? chartParams.colors : undefined,
-          xaxis: {
-            categories: getChartCategories(),
-            labels: {
-              rotate: -90
-            }
-          },
-          yaxis: {
-            max: chartParams?.yAxisMax ? chartParams.yAxisMax : undefined,
-            min: chartParams?.yAxisMin ? chartParams.yAxisMin : undefined
-          },
-          chart: {
-            stacked: chartParams?.stacked,
-            stackType: chartParams?.stackType ? '100%' : undefined,
-            type:
-              chartParams?.type === 'table' || chartParams?.type === undefined
-                ? 'bar'
-                : chartParams?.type
-          },
-          dataLabels: {
-            enabled: chartParams?.showLabels,
-            formatter: function (val: any) {
-              if (chartParams?.type === 'pie' || chartParams?.stackType) {
-                return val.toFixed(2) + '%'
+      {headers && content && (
+        <Chart
+          options={{
+            colors: chartParams?.colors ? chartParams.colors : undefined,
+            xaxis: {
+              categories: getChartCategories(),
+              labels: {
+                rotate: -90
               }
-              return val
-            }
-          },
-          labels: getChartCategories()
-        }}
-        series={getChartSeries()}
-        type={
-          chartParams?.type === 'table' || chartParams?.type === undefined
-            ? 'bar'
-            : chartParams?.type
-        }
-        height={chartParams?.height ? chartParams?.height : '90%'}
-        width={chartParams?.width ? chartParams?.width : '90%'}
-      />
+            },
+            yaxis: {
+              max: chartParams?.yAxisMax ? chartParams.yAxisMax : undefined,
+              min: chartParams?.yAxisMin ? chartParams.yAxisMin : undefined
+            },
+            chart: {
+              background: chartParams?.backgroundColor
+                ? chartParams.backgroundColor
+                : '#fff',
+              stacked: chartParams?.stacked,
+              stackType: chartParams?.stackType ? '100%' : undefined,
+              type:
+                chartParams?.type === 'table' || chartParams?.type === undefined
+                  ? 'bar'
+                  : chartParams?.type
+            },
+            dataLabels: {
+              enabled: chartParams?.showLabels,
+              formatter: function (val: any) {
+                if (chartParams?.type === 'pie' || chartParams?.stackType) {
+                  return val.toFixed(2) + '%'
+                }
+                return val
+              }
+            },
+            labels: getChartCategories()
+          }}
+          series={getChartSeries()}
+          type={
+            chartParams?.type === 'table' || chartParams?.type === undefined
+              ? 'bar'
+              : chartParams?.type
+          }
+          height={chartParams?.height ? chartParams?.height : '90%'}
+          width={chartParams?.width ? chartParams?.width : '90%'}
+        />
+      )}
     </div>
   )
 }

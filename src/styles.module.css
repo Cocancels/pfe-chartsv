@@ -1,4 +1,8 @@
 @charset "UTF-8";
+p {
+  padding: 0;
+  margin: 0; }
+
 /* Import button */
 .pfe-import-button-small {
   display: flex;
@@ -107,7 +111,8 @@
   text-align: center;
   font-weight: bold;
   flex: 1 1 0;
-  width: 0; }
+  width: 0;
+  padding: 16px; }
 
 .pfe-modal-table-content {
   display: flex;
@@ -132,7 +137,8 @@
   flex: 1 1 0;
   width: 0;
   overflow: hidden;
-  text-overflow: ellipsis; }
+  text-overflow: ellipsis;
+  padding: 10px; }
 
 .pfe-modal-full-container {
   width: 100%;
