@@ -90,18 +90,48 @@ export const ChartCreator = (props: ChartCreatorProps) => {
   }
 
   const getFileHeaders = async () => {
-    const headers: any = text.split('\n')[0].split(',')
+    const splitIgnoringCommasInsideQuotes = (str: string) => {
+      const result = []
+      let currentSegment = ''
+      let insideQuotes = false
+
+      for (let i = 0; i < str.length; i++) {
+        const char = str[i]
+        if (char === '"' && str[i - 1] !== '\\') {
+          insideQuotes = !insideQuotes
+        } else if (char === ',' && !insideQuotes) {
+          result.push(currentSegment)
+          currentSegment = ''
+          continue
+        }
+        currentSegment += char
+      }
+
+      if (currentSegment) {
+        result.push(currentSegment)
+      }
+
+      return result
+    }
+
+    const headers = splitIgnoringCommasInsideQuotes(text.split('\n')[0])
 
     if (headers[headers.length - 1].includes('\r')) {
-      headers[headers.length - 1] = headers[headers.length - 1].slice(0, -1)
+      headers[headers.length - 1] = headers[headers.length - 1].replace(
+        '\r',
+        ''
+      )
     }
 
     const thisContent = await getFileContent()
 
-    const newHeaders = headers.map((header: string, index: number) => {
-      const type = thisContent?.[0]?.[index].type
+    const newHeaders = headers.map((header, index) => {
+      if (!thisContent[0][index]) {
+        console.log(thisContent[0][index])
+      }
+      const type = thisContent?.[0]?.[index]?.type
       return {
-        name: header,
+        name: header.trim(),
         type: type
       }
     })
@@ -147,6 +177,15 @@ export const ChartCreator = (props: ChartCreatorProps) => {
 
       if ((char === ',' && !insideQuotes) || isEndOfLine) {
         let type = 'string'
+        // check if currentcell has comma inside, if so, check if it's a number
+        if (currentCell.includes(',')) {
+          const number = Number(currentCell.replace(',', '.'))
+          if (!isNaN(number)) {
+            currentCell = number
+            type = 'number'
+          }
+        }
+
         const number = Number(currentCell)
         if (!isNaN(number)) {
           currentCell = number
@@ -166,7 +205,10 @@ export const ChartCreator = (props: ChartCreatorProps) => {
     }
 
     if (currentCell) {
-      cells.push(currentCell)
+      cells.push({
+        value: currentCell,
+        type: 'string'
+      })
     }
 
     return cells
