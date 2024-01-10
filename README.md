@@ -4,39 +4,52 @@
 
 [![NPM](https://img.shields.io/npm/v/pfe-chartsv.svg)](https://www.npmjs.com/package/pfe-chartsv) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-## WARNING
+## Documentation
 
-If you get an error when executing npm start on /example folder, you have 2 solutions:
-
-<ol>
-  <li>
-    <p>Upgrade your Node version to latest (actually v20)</p>
-  </li>
-  <li>
-    <p>Remove the <strong>--openssl-legacy-provider</strong> in package.json (line 7-8)</p>
-  </li>
-</ol>
+You can find the documentation [here](https://www.chartsv.fr/).
 
 ## Install
 
 ```bash
-npm install --save pfe-chartsv
+npm install pfe-chartsv
 ```
 
 ## Usage
 
 ```tsx
-import React, { Component } from 'react'
-
-import MyComponent from 'pfe-chartsv'
+import React from 'react'
 import 'pfe-chartsv/dist/index.css'
+import { ImportButton, CustomChart } from 'pfe-chartsv'
 
-class Example extends Component {
-  render() {
-    return <MyComponent />
-  }
+const App = () => {
+  return (
+    <div>
+      <!-- ImportButton component -->
+      <ImportButton size='medium' />
+
+      <!-- CustomChart component -->
+      <CustomChart
+        link='./test.csv'
+        chartParams={{
+          stacked: true,
+          showLabels: true,
+          yAxisMax: 100,
+          yAxisMin: 0,
+          height: '500px',
+          width: '100%',
+          colors: ['#FF0000', '#00FF00'],
+          textColor: 'red'
+        }}
+        cols={['age', 'monnaie']}
+      />
+    </div>
+  )
 }
+
+export default App
 ```
+
+<p>You can find the <strong>test.csv</strong> file in 'example/public' folder. </p>
 
 ## License
 

@@ -114,10 +114,8 @@ export const ChartCreator = (props: ChartCreatorProps) => {
       return result
     }
 
-    // Split the first line by respecting quotes
     const headers = splitIgnoringCommasInsideQuotes(text.split('\n')[0])
 
-    // Remove carriage return character from the last header, if present
     if (headers[headers.length - 1].includes('\r')) {
       headers[headers.length - 1] = headers[headers.length - 1].replace(
         '\r',
@@ -127,16 +125,13 @@ export const ChartCreator = (props: ChartCreatorProps) => {
 
     const thisContent = await getFileContent()
 
-    console.log(headers)
-
-    // Map headers to their names and types
     const newHeaders = headers.map((header, index) => {
       if (!thisContent[0][index]) {
         console.log(thisContent[0][index])
       }
       const type = thisContent?.[0]?.[index]?.type
       return {
-        name: header.trim(), // Trim header to remove any surrounding whitespace
+        name: header.trim(),
         type: type
       }
     })
