@@ -9,6 +9,9 @@ const App = () => {
       <CustomChart
         link='./test.csv'
         chartParams={{
+          title: {
+            text: 'Test'
+          },
           stacked: true,
           showLabels: true,
           yAxisMax: 100,
@@ -16,7 +19,9 @@ const App = () => {
           height: '500px',
           width: '100%',
           colors: ['#FF0000', '#00FF00'],
-          textColor: 'red'
+          axisColor: 'red',
+          legendColor: 'black',
+          labelColor: 'white'
         }}
         cols={['age', 'monnaie']}
       />

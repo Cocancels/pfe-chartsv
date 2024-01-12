@@ -9,6 +9,10 @@ interface CustomChartProps {
 }
 
 interface CustomChartParams {
+  title?: {
+    text?: string
+    className?: string
+  }
   type?: 'bar' | 'line' | 'area' | 'table' | 'pie'
   stacked?: boolean
   stackType?: boolean
@@ -19,7 +23,9 @@ interface CustomChartParams {
   width?: number | string
   colors?: string[]
   backgroundColor?: string
-  textColor?: string
+  labelColor?: string
+  axisColor?: string
+  legendColor?: string
   toolbar?: boolean
 }
 
@@ -200,6 +206,11 @@ export const CustomChart = (props: CustomChartProps) => {
 
   return (
     <div style={{ width: '100%' }}>
+      {chartParams?.title?.text && (
+        <h2 className={chartParams.title.className}>
+          {chartParams.title.text}
+        </h2>
+      )}
       {headers && content && (
         <Chart
           options={{
@@ -209,8 +220,8 @@ export const CustomChart = (props: CustomChartProps) => {
               labels: {
                 rotate: -90,
                 style: {
-                  colors: chartParams?.textColor
-                    ? chartParams.textColor
+                  colors: chartParams?.axisColor
+                    ? chartParams.axisColor
                     : '#000'
                 }
               }
@@ -220,8 +231,8 @@ export const CustomChart = (props: CustomChartProps) => {
               min: chartParams?.yAxisMin ? chartParams.yAxisMin : undefined,
               labels: {
                 style: {
-                  colors: chartParams?.textColor
-                    ? chartParams.textColor
+                  colors: chartParams?.axisColor
+                    ? chartParams.axisColor
                     : '#000'
                 }
               }
@@ -242,7 +253,9 @@ export const CustomChart = (props: CustomChartProps) => {
             },
             legend: {
               labels: {
-                colors: chartParams?.textColor ? chartParams.textColor : '#000'
+                colors: chartParams?.legendColor
+                  ? chartParams.legendColor
+                  : '#000'
               }
             },
             dataLabels: {
@@ -254,8 +267,8 @@ export const CustomChart = (props: CustomChartProps) => {
                 return val
               },
               style: {
-                colors: chartParams?.textColor
-                  ? [chartParams.textColor]
+                colors: chartParams?.labelColor
+                  ? [chartParams.labelColor]
                   : ['#fff']
               }
             },
